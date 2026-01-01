@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.express as px
 from sentence_transformers import SentenceTransformer, util
 from utils import preprocess_text
+import urllib.parse 
 
 # --- Load Models & Assets ---
 @st.cache_resource
@@ -19,15 +20,6 @@ def load_assets():
 
 bert_model, lr_model, tfidf = load_assets()
 
-# --- Functions ---
-# def get_live_news():
-#     rss_url = "https://news.google.com/rss/search?q=site:reuters.com&hl=en-US&gl=US"
-#     feed = feedparser.parse(rss_url)
-#     return [entry.title for entry in feed.entries[:15]]
-
-
-import urllib.parse  # <--- Add this import at the top of your file
-
 
 def get_dynamic_context(user_query):
     # Remove common words to get better search results (e.g., "is", "the", "of")
@@ -39,93 +31,6 @@ def get_dynamic_context(user_query):
     
     feed = feedparser.parse(rss_url)
     return [entry.title for entry in feed.entries[:10]]
-
-# def hybrid_prediction(news_text):
-#     # Part A: Statistical ML Prediction
-#     if lr_model and tfidf:
-#         # Preprocess text using your shared utils function
-#         clean_text = preprocess_text(news_text)
-#         vectorized_text = tfidf.transform([clean_text])
-#         ml_score = lr_model.predict_proba(vectorized_text)[0][1] 
-#     else:
-#         ml_score = 0.5
-
-#     # Part B: Semantic BERT Check (Comparing input text with live headlines)
-#     live_headlines = get_live_news()
-#     input_embedding = bert_model.encode(news_text, convert_to_tensor=True)
-#     trusted_embeddings = bert_model.encode(live_headlines, convert_to_tensor=True)
-    
-#     similarity_scores = util.cos_sim(input_embedding, trusted_embeddings)
-#     max_sim_score = float(similarity_scores.max())
-    
-#     # Final Hybrid Score
-#     final_score = (ml_score * 0.4) + (max_sim_score * 0.6)
-#     return final_score, max_sim_score, ml_score
-
-
-
-
-# def hybrid_prediction(news_text):
-#     # 1. Statistical ML Prediction (Needs Cleaning)
-#     if lr_model and tfidf:
-#         clean_text = preprocess_text(news_text) # Shared cleaning logic
-#         vectorized_text = tfidf.transform([clean_text])
-#         # Probability that the news is REAL
-#         ml_score = lr_model.predict_proba(vectorized_text)[0][1] 
-#     else:
-#         ml_score = 0.5
-
-#     # 2. Semantic BERT Check (Needs Natural Text)
-#     live_headlines = get_live_news()
-#     # BERT understands context better WITHOUT heavy cleaning
-#     input_embedding = bert_model.encode(news_text, convert_to_tensor=True)
-#     trusted_embeddings = bert_model.encode(live_headlines, convert_to_tensor=True)
-    
-#     similarity_scores = util.cos_sim(input_embedding, trusted_embeddings)
-#     max_sim_score = float(similarity_scores.max())
-    
-#     # 3. SMART HYBRID LOGIC
-#     # If a high similarity is found in live news, it's almost certainly REAL.
-#     if max_sim_score > 0.75:
-#         final_score = max_sim_score # Trust the live match
-#     else:
-#         # If no live match, rely more on the ML model's pattern detection
-#         final_score = (ml_score * 0.7) + (max_sim_score * 0.3)
-        
-#     return final_score, max_sim_score, ml_score
-
-
-
-
-
-# def hybrid_prediction(news_text):
-#     # --- PATH 1: Statistical ML (CLEANED) ---
-#     if lr_model and tfidf:
-#         # We clean the text ONLY for the Logistic Regression model
-#         cleaned_for_ml = preprocess_text(news_text) 
-#         vectorized_text = tfidf.transform([cleaned_for_ml])
-#         ml_score = lr_model.predict_proba(vectorized_text)[0][1] 
-#     else:
-#         ml_score = 0.5
-
-#     # --- PATH 2: Semantic BERT (NATURAL) ---
-#     live_headlines = get_live_news()
-    
-#     # We use the raw 'news_text' so BERT sees the full grammar/context
-#     input_embedding = bert_model.encode(news_text, convert_to_tensor=True)
-#     trusted_embeddings = bert_model.encode(live_headlines, convert_to_tensor=True)
-    
-#     similarity_scores = util.cos_sim(input_embedding, trusted_embeddings)
-#     max_sim_score = float(similarity_scores.max())
-    
-#     # --- PATH 3: Hybrid Logic ---
-#     # Weighting: 40% ML, 60% BERT
-#     final_score = (ml_score * 0.4) + (max_sim_score * 0.6)
-    
-#     return final_score, max_sim_score, ml_score
-
-
-
 
 
 def hybrid_prediction(news_text):

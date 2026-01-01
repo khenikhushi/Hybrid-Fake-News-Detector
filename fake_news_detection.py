@@ -26,7 +26,7 @@ stop_words = set(stopwords.words('english'))
 stemmer = PorterStemmer()
 
 # -----------------------------
-# 3. Load & Clean Dataset
+# 2. Load & Clean Dataset
 # -----------------------------
 try:
     # UPDATED: Changed filename to match your uploaded dataset
@@ -53,7 +53,7 @@ except KeyError:
     exit()
 
 # -----------------------------
-# 4. Feature Extraction (TF-IDF)
+# 3. Feature Extraction (TF-IDF)
 # -----------------------------
 # Using 5000 features to balance accuracy and performance
 vectorizer = TfidfVectorizer(max_features=5000)
@@ -61,7 +61,7 @@ X = vectorizer.fit_transform(df['clean_text'])
 y = df['label']
 
 # -----------------------------
-# 5. Training
+# 4. Training
 # -----------------------------
 # Stratify ensures the split has a balanced ratio of real/fake news
 X_train, X_test, y_train, y_test = train_test_split(
@@ -76,7 +76,7 @@ model = LogisticRegression(
 model.fit(X_train, y_train)
 
 # -----------------------------
-# 6. Evaluation
+# 5. Evaluation
 # -----------------------------
 y_pred = model.predict(X_test)
 print("\n--- Model Training Complete ---")
@@ -85,7 +85,7 @@ print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
 
 # -----------------------------
-# 7. Prediction Function
+# 6. Prediction Function
 # -----------------------------
 def predict_news(news_text):
     clean_news = preprocess_text(news_text)
@@ -103,7 +103,7 @@ def predict_news(news_text):
 
 
 # -----------------------------
-# 9. EXPORT FOR HYBRID SYSTEM
+# 7. EXPORT FOR HYBRID SYSTEM
 # -----------------------------
 # Saving the files so they can be used by app_advanced.py
 joblib.dump(model, 'lr_model.pkl')

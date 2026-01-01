@@ -83,7 +83,7 @@ total_accuracy = accuracy_score(true_labels, predictions)
 
 
 # ===============================
-# IIT-LEVEL EVALUATION METRICS
+#  EVALUATION METRICS
 # ===============================
 
 precision = precision_score(true_labels, predictions)
